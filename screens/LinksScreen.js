@@ -1,13 +1,18 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { Text, View,Button, StatusBar ,SafeAreaView,Image} from 'react-native';
+import { Text, View,Button, StatusBar ,SafeAreaView,Image,Picker} from 'react-native';
 import { Header } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
 import Config from "../config.json";
 import {Platform} from 'react-native';
 console.log(Config.API_URL+'/test');
 console.log("Platform: ",Platform);
+// import { accelerometer } from "react-native-sensors";
+
+// const subscription = accelerometer.subscribe(({ x, y, z, timestamp }) =>
+//   console.log({ x, y, z, timestamp })
+// );
 
 const platformDetect = Platform.select({
   ios: () => console.log("Platform: ", "iOS"),
@@ -21,14 +26,23 @@ class App extends React.Component {
     this.state = {
       response: false,
       jsonData: '',
+      listDevices: '',
       text:'',
-      Platform:''
+      Platform:'',
+      userTypes: [{userType: 'admin', userName: 'Admin User'}, {userType: 'employee', userName: 'Employee User'}, {userType: 'dev', userName: 'Developer User'}],
+      selectedUserType: ''
     };
   }
 
 //  push(){
 //    this.setState({Platform: Platform})
 //  }
+
+loadUserTypes() {
+  return this.state.userTypes.map(user => (
+     <Picker.Item label={user.userName} value={user.userType} />
+  ))
+}
 
   componentDidMount() {
     // const { endpoint } = this.state;
@@ -48,11 +62,28 @@ class App extends React.Component {
           console.error(error);
         });
 
+        fetch(Config.API_URL+'/listDevices', {
+          method: 'GET',
+        })
+          .then(response => response.text())
+          .then(text => {
+            this.setState({
+              listDevices: text,
+            });
+          })
+          .catch(error => {
+            console.error(error);
+          });
+
+          this.setState({Platform : Platform.OS})
+          console.log("Platform: -------->",Platform.OS);
   }
   
   render() {
     const { jsonData } = this.state;
-    console.log('Rendered response: ', jsonData);
+    const { listDevices} = this.state;
+    const { Platform} = this.state;
+    console.log('Serial Data response: ', jsonData);
     return (
       <SafeAreaView>
         <ScrollView
@@ -66,14 +97,20 @@ class App extends React.Component {
         rightComponent={{ icon: 'home', color: '#fff' }}
       />
          <Image source={require('../assets/images/play.png')} style={styles.welcomeImage}/>
-         <Button title="Test me" onPress={() => console.log("Success")} style={styles.ButtonStyle}/>
-         <Text>{jsonData}</Text>
+         <Button title="List of Devices" onPress={() => console.log("Success")} style={styles.ButtonStyle}/>
+         <Text>{listDevices}</Text>
          <Button title="GPS Data" onPress={() => console.log("GPS --> Success")} style={styles.ButtonStyle}/>
          <Text>{jsonData}</Text>
          <Button title="Stream ON" onPress={() => console.log("Streaming --> Success")} style={styles.ButtonStyle}/>
          <Text>{jsonData}</Text>
          <Button title="Platform" onPress={() => console.log("Platform --> Success")} style={styles.ButtonStyle}/>
-         
+         <Text>{Platform}</Text>
+         <Picker
+          selectedValue={this.state.selectedUserType}
+          onValueChange={(itemValue, itemIndex) => 
+          this.setState({selectedUserType: itemValue})}>
+          {this.loadUserTypes()}
+         </Picker>
         </ScrollView>
       </SafeAreaView>
     );
