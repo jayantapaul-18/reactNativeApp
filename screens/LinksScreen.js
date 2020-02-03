@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { Text, View,Button, StatusBar ,SafeAreaView,Image} from 'react-native';
+import { Header } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
 import Config from "../config.json";
 import {Platform} from 'react-native';
@@ -20,11 +21,14 @@ class App extends React.Component {
     this.state = {
       response: false,
       jsonData: '',
-      text:''
+      text:'',
+      Platform:''
     };
   }
 
- 
+//  push(){
+//    this.setState({Platform: Platform})
+//  }
 
   componentDidMount() {
     // const { endpoint } = this.state;
@@ -52,13 +56,24 @@ class App extends React.Component {
     return (
       <SafeAreaView>
         <ScrollView
+ 
         contentContainerStyle={styles.contentContainer}>
         <View style={styles.welcomeContainer}></View>
-  
+        <Header
+        placement="left"
+        leftComponent={{ icon: 'menu', color: '#fff' }}
+        centerComponent={{ text: 'LIVE', style: { color: '#fff' } }}
+        rightComponent={{ icon: 'home', color: '#fff' }}
+      />
          <Image source={require('../assets/images/play.png')} style={styles.welcomeImage}/>
-         <Button title="Test me" onPress={() => console.log("Success")}/>
+         <Button title="Test me" onPress={() => console.log("Success")} style={styles.ButtonStyle}/>
          <Text>{jsonData}</Text>
-     
+         <Button title="GPS Data" onPress={() => console.log("GPS --> Success")} style={styles.ButtonStyle}/>
+         <Text>{jsonData}</Text>
+         <Button title="Stream ON" onPress={() => console.log("Streaming --> Success")} style={styles.ButtonStyle}/>
+         <Text>{jsonData}</Text>
+         <Button title="Platform" onPress={() => console.log("Platform --> Success")} style={styles.ButtonStyle}/>
+         
         </ScrollView>
       </SafeAreaView>
     );
@@ -71,15 +86,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 10,
+    paddingTop: 0,
   },
   welcomeImage: {
     width: 60,
     height: 50,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
+    marginLeft: 10,
   },
+  ButtonStyle: {
+    width: 60,
+    height: 50,
+  }
 });
 
 
