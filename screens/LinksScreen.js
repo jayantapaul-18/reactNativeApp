@@ -1,12 +1,13 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
-import { Text, View,Button, StatusBar ,SafeAreaView,Image,Picker} from 'react-native';
-import { Header } from 'react-native-elements';
+import { Text, View,Button, StatusBar ,SafeAreaView,Image,Picker,TouchableOpacity} from 'react-native';
+//import { Header } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
 import Config from "../config.json";
 import {Platform} from 'react-native';
-console.log(Config.API_URL+'/test');
+
+import { WebView} from 'react-native-webview'
+console.log(Config.API_URL+'/app/healthcheck');
 console.log("Platform: ",Platform);
 // import { accelerometer } from "react-native-sensors";
 
@@ -20,6 +21,8 @@ const platformDetect = Platform.select({
 })();
 
 
+
+//export default function LinkScreen() {
 class App extends React.Component {
   constructor() {
     super();
@@ -29,14 +32,10 @@ class App extends React.Component {
       listDevices: '',
       text:'',
       Platform:'',
-      userTypes: [{userType: 'admin', userName: 'Admin User'}, {userType: 'employee', userName: 'Employee User'}, {userType: 'dev', userName: 'Developer User'}],
+      userTypes: [{userType: 'DEVICES', userName: 'CAMERA'}, {userType: 'GPS', userName: 'GPS'}, {userType: 'SENSOR', userName: 'SENSOR'}],
       selectedUserType: ''
     };
   }
-
-//  push(){
-//    this.setState({Platform: Platform})
-//  }
 
 loadUserTypes() {
   return this.state.userTypes.map(user => (
@@ -49,7 +48,7 @@ loadUserTypes() {
     // const socket = socketIOClient(endpoint);
     // socket.on("FromAPI", data => {this.setState({ response: data })
 
-      fetch(Config.API_URL+'/test', {
+      fetch(Config.API_URL+'/app/healthcheck', {
         method: 'GET',
       })
         .then(response => response.text())
@@ -62,7 +61,7 @@ loadUserTypes() {
           console.error(error);
         });
 
-        fetch(Config.API_URL+'/listDevices', {
+        fetch(Config.API_URL+'/app/listDevices', {
           method: 'GET',
         })
           .then(response => response.text())
@@ -78,25 +77,49 @@ loadUserTypes() {
           this.setState({Platform : Platform.OS})
           console.log("Platform: -------->",Platform.OS);
   }
-  
+
+
   render() {
+    
     const { jsonData } = this.state;
     const { listDevices} = this.state;
     const { Platform} = this.state;
     console.log('Serial Data response: ', jsonData);
+
     return (
       <SafeAreaView>
-        <ScrollView
- 
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}></View>
-        <Header
+       {/* <Header
         placement="left"
         leftComponent={{ icon: 'menu', color: '#fff' }}
         centerComponent={{ text: 'LIVE', style: { color: '#fff' } }}
         rightComponent={{ icon: 'home', color: '#fff' }}
-      />
-         <Image source={require('../assets/images/play.png')} style={styles.welcomeImage}/>
+      /> */}
+      
+        <ScrollView
+         contentContainerStyle={styles.contentContainer}>       
+         
+         <Image source={require('../assets/images/stream.png')} style={styles.welcomeImage}/>
+         <TouchableOpacity 
+          style={styles.ButtonStyle} onPress={this.onPress}>
+         <Text>Devices</Text> 
+         </TouchableOpacity>
+         <Picker
+          style={styles.picker}
+          selectedValue={this.state.selectedUserType}
+          onValueChange={(itemValue, itemIndex) => 
+          this.setState({selectedUserType: itemValue})}>
+          {this.loadUserTypes()}
+         </Picker>
+
+         <TouchableOpacity
+            style={styles.button} onPress={this.onPress}>
+            <Text>Light ON</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.button} onPress={this.onPress}>
+            <Text>Light OFF</Text>
+          </TouchableOpacity>
+
          <Button title="List of Devices" onPress={() => console.log("Success")} style={styles.ButtonStyle}/>
          <Text>{listDevices}</Text>
          <Button title="GPS Data" onPress={() => console.log("GPS --> Success")} style={styles.ButtonStyle}/>
@@ -105,17 +128,12 @@ loadUserTypes() {
          <Text>{jsonData}</Text>
          <Button title="Platform" onPress={() => console.log("Platform --> Success")} style={styles.ButtonStyle}/>
          <Text>{Platform}</Text>
-         <Picker
-          selectedValue={this.state.selectedUserType}
-          onValueChange={(itemValue, itemIndex) => 
-          this.setState({selectedUserType: itemValue})}>
-          {this.loadUserTypes()}
-         </Picker>
         </ScrollView>
       </SafeAreaView>
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -123,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 0,
+    paddingTop: 1,
   },
   welcomeImage: {
     width: 60,
@@ -133,8 +151,25 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   ButtonStyle: {
-    width: 60,
-    height: 50,
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 8,
+    width:100,
+    marginTop:18
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 8,
+    width:100,
+    marginTop:16
+  },
+  picker: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 6,
+    width:100,
+    marginTop:16
   }
 });
 
