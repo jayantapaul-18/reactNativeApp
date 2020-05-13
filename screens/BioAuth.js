@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Text,
   View,
@@ -8,9 +8,9 @@ import {
   Button,
   Image,
   Platform,
-} from 'react-native';
-import Constants from 'expo-constants';
-import * as LocalAuthentication from 'expo-local-authentication';
+} from "react-native";
+import Constants from "expo-constants";
+import * as LocalAuthentication from "expo-local-authentication";
 
 export default class App extends React.Component {
   state = {
@@ -52,18 +52,19 @@ export default class App extends React.Component {
         style={[
           styles.container,
           this.state.modalVisible
-            ? { backgroundColor: '#b7b7b7' }
-            : { backgroundColor: 'white' },
-        ]}>
+            ? { backgroundColor: "#b7b7b7" }
+            : { backgroundColor: "white" },
+        ]}
+      >
         <Button
           title={
             this.state.authenticated
-              ? 'Reset and begin Authentication again'
-              : 'Begin Authentication'
+              ? "Reset and begin Authentication again"
+              : "Begin Authentication"
           }
           onPress={() => {
             this.clearState();
-            if (Platform.OS === 'android') {
+            if (Platform.OS === "android") {
               this.setModalVisible(!this.state.modalVisible);
             } else {
               this.scanFingerPrint();
@@ -79,16 +80,17 @@ export default class App extends React.Component {
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
-          onShow={this.scanFingerPrint}>
+          onShow={this.scanFingerPrint}
+        >
           <View style={styles.modal}>
             <View style={styles.innerContainer}>
               <Text>Sign in with fingerprint</Text>
               <Image
                 style={{ width: 128, height: 128 }}
-                source={require('./assets/fingerprint.png')}
+                source={require("./assets/fingerprint.png")}
               />
               {this.state.failedCount > 0 && (
-                <Text style={{ color: 'red', fontSize: 14 }}>
+                <Text style={{ color: "red", fontSize: 14 }}>
                   Failed to authenticate, press cancel and try again.
                 </Text>
               )}
@@ -96,8 +98,9 @@ export default class App extends React.Component {
                 onPress={async () => {
                   LocalAuthentication.cancelAuthenticate();
                   this.setModalVisible(!this.state.modalVisible);
-                }}>
-                <Text style={{ color: 'red', fontSize: 16 }}>Cancel</Text>
+                }}
+              >
+                <Text style={{ color: "red", fontSize: 16 }}>Cancel</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -110,26 +113,26 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignContent: 'center',
+    justifyContent: "center",
+    alignContent: "center",
     paddingTop: Constants.statusBarHeight,
     padding: 8,
   },
   modal: {
     flex: 1,
-    marginTop: '90%',
-    backgroundColor: '#E5E5E5',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: "90%",
+    backgroundColor: "#E5E5E5",
+    justifyContent: "center",
+    alignItems: "center",
   },
   innerContainer: {
-    marginTop: '30%',
+    marginTop: "30%",
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   text: {
-    alignSelf: 'center',
+    alignSelf: "center",
     fontSize: 22,
     paddingTop: 20,
   },
